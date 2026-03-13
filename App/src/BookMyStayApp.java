@@ -1,30 +1,64 @@
-import java.util.HashMap;
-import java.util.Map;
+public class BookMyStayApp {
 
-public class RoomInventory {
-    // The Centralized Store
-    private Map<String, Integer> inventory = new HashMap<>();
+    public static void main(String[] args) {
 
-    // Registering Room Types
-    public void initializeRoom(String type, int count) {
-        inventory.put(type, count);
+        System.out.println("=================================");
+        System.out.println(" Welcome to Book My Stay");
+        System.out.println(" Hotel Booking Management System");
+        System.out.println(" Version: v1.0");
+        System.out.println("=================================\n");
+
+        Room standard = new StandardRoom(10);
+        Room deluxe = new DeluxeRoom(5);
+        Room suite = new SuiteRoom(2);
+
+        System.out.println("Available Room Types:\n");
+
+        standard.displayRoomDetails();
+        deluxe.displayRoomDetails();
+        suite.displayRoomDetails();
+
+        System.out.println("Thank you for using Book My Stay!");
+    }
+}
+
+abstract class Room {
+
+    protected String roomType;
+    protected double pricePerNight;
+    protected int availableRooms;
+
+    public Room(String roomType, double pricePerNight, int availableRooms) {
+        this.roomType = roomType;
+        this.pricePerNight = pricePerNight;
+        this.availableRooms = availableRooms;
     }
 
-    // Controlled Updates (The "Logic" Layer)
-    public boolean updateAvailability(String type, int change) {
-        if (inventory.containsKey(type)) {
-            int current = inventory.get(type);
-            if (current + change >= 0) {
-                inventory.put(type, current + change);
-                return true;
-            }
-        }
-        return false; // Insufficient rooms or invalid type
+    public void displayRoomDetails() {
+        System.out.println("Room Type: " + roomType);
+        System.out.println("Price per Night: ₹" + pricePerNight);
+        System.out.println("Available Rooms: " + availableRooms);
+        System.out.println("---------------------------------");
     }
+}
 
-    // Displaying State
-    public void showInventory() {
-        inventory.forEach((type, count) ->
-                System.out.println(type + ": " + count + " available"));
+class StandardRoom extends Room {
+
+    public StandardRoom(int availableRooms) {
+        super("Standard Room", 2000, availableRooms);
+    }
+}
+
+class DeluxeRoom extends Room {
+
+    public DeluxeRoom(int availableRooms) {
+        super("Deluxe Room", 3500, availableRooms);
+    }
+}
+
+class SuiteRoom extends Room {
+
+    public SuiteRoom(int availableRooms) {
+        super("Suite Room", 6000, availableRooms);
     }
 }
