@@ -1,7 +1,7 @@
 import java.util.*;
 
-class InvalidCapacityException extends Exception {
-    InvalidCapacityException(String message) {
+class InvalidCargoException extends Exception {
+    InvalidCargoException(String message) {
         super(message);
     }
 }
@@ -24,22 +24,6 @@ abstract class Bogie {
     }
 }
 
-class PassengerBogie extends Bogie {
-    int capacity;
-
-    PassengerBogie(String id, String type, int capacity) throws InvalidCapacityException {
-        super(id, type);
-        if (capacity <= 0) {
-            throw new InvalidCapacityException("Invalid capacity for bogie " + id);
-        }
-        this.capacity = capacity;
-    }
-
-    int getCapacity() {
-        return capacity;
-    }
-}
-
 class GoodsBogie extends Bogie {
     String cargoType;
 
@@ -47,24 +31,44 @@ class GoodsBogie extends Bogie {
         super(id, type);
         this.cargoType = cargoType;
     }
+
+    void assignCargo(String cargo) throws InvalidCargoException {
+        if (type.equals("Cylindrical") && !cargo.equalsIgnoreCase("Oil")) {
+            throw new InvalidCargoException("Unsafe cargo for Cylindrical bogie " + id);
+        }
+        if (type.equals("Rectangular") && cargo.equalsIgnoreCase("Oil")) {
+            throw new InvalidCargoException("Unsafe cargo for Rectangular bogie " + id);
+        }
+        this.cargoType = cargo;
+    }
+
+    String getCargoType() {
+        return cargoType;
+    }
 }
 
 public class Main {
     public static void main(String[] args) {
 
-        List<Bogie> bogies = new ArrayList<>();
+        GoodsBogie g1 = new GoodsBogie("G1", "Cylindrical", "Oil");
+        GoodsBogie g2 = new GoodsBogie("G2", "Rectangular", "Coal");
 
         try {
-            bogies.add(new PassengerBogie("P1", "Sleeper", 72));
-            bogies.add(new PassengerBogie("P2", "AC Chair", -10));
-        } catch (InvalidCapacityException e) {
+            g1.assignCargo("Coal");
+            System.out.println("Cargo assigned to " + g1.getId());
+        } catch (InvalidCargoException e) {
             System.out.println(e.getMessage());
+        } finally {
+            System.out.println("Attempted assignment for " + g1.getId());
         }
 
-        bogies.add(new GoodsBogie("G1", "Rectangular", "Coal"));
-
-        for (Bogie b : bogies) {
-            System.out.println("Bogie ID: " + b.getId() + " Type: " + b.getType());
+        try {
+            g2.assignCargo("Oil");
+            System.out.println("Cargo assigned to " + g2.getId());
+        } catch (InvalidCargoException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("Attempted assignment for " + g2.getId());
         }
     }
 }
