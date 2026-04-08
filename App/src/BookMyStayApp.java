@@ -1,49 +1,77 @@
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-class Bogie {
-    private String name;
-    private int capacity;
+// Base Class
+abstract class Bogie {
+    private String id;
 
-    public Bogie(String name, int capacity) {
-        this.name = name;
-        this.capacity = capacity;
+    public Bogie(String id) {
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
+    }
+}
+
+// Passenger Bogie Class
+class PassengerBogie extends Bogie {
+    private String type;
+    private int seatingCapacity;
+
+    public PassengerBogie(String id, String type, int seatingCapacity) {
+        super(id);
+        this.type = type;
+        this.seatingCapacity = seatingCapacity;
     }
 
-    public int getCapacity() {
-        return capacity;
+    public String getType() {
+        return type;
+    }
+
+    public int getSeatingCapacity() {
+        return seatingCapacity;
     }
 
     @Override
     public String toString() {
-        return name + " (" + capacity + " seats)";
+        return "Bogie ID: " + getId() +
+                ", Type: " + type +
+                ", Capacity: " + seatingCapacity;
     }
 }
 
-public class BookMyStayApp {
-
+// Main App
+public class TrainConsistApp {
     public static void main(String[] args) {
 
-        System.out.println("=== Train Consist Management App ===");
+        List<PassengerBogie> bogies = new ArrayList<>();
 
-        // Create List of passenger bogies
-        List<Bogie> passengerBogies = new ArrayList<>();
+        bogies.add(new PassengerBogie("B1", "Sleeper", 72));
+        bogies.add(new PassengerBogie("B2", "AC Chair", 45));
+        bogies.add(new PassengerBogie("B3", "First Class", 30));
+        bogies.add(new PassengerBogie("B4", "Sleeper", 65));
+        bogies.add(new PassengerBogie("B5", "AC Chair", 55));
 
-        // Add bogies
-        passengerBogies.add(new Bogie("Sleeper", 72));
-        passengerBogies.add(new Bogie("AC Chair", 54));
-        passengerBogies.add(new Bogie("First Class", 30));
+        // ✅ UC8: Filter high-capacity bogies (>50 seats)
+        List<PassengerBogie> highCapacity = bogies.stream()
+                .filter(b -> b.getSeatingCapacity() > 50)
+                .collect(Collectors.toList());
 
-        System.out.println("Before Sorting: " + passengerBogies);
+        System.out.println("=== High Capacity Bogies (>50 seats) ===");
+        highCapacity.forEach(System.out::println);
 
-        // Sort bogies by capacity (ascending order)
-        passengerBogies.sort(Comparator.comparingInt(Bogie::getCapacity));
+        // ✅ Filter only Sleeper bogies
+        System.out.println("\n=== Sleeper Bogies ===");
+        bogies.stream()
+                .filter(b -> b.getType().equalsIgnoreCase("Sleeper"))
+                .forEach(System.out::println);
 
-        System.out.println("After Sorting by Capacity: " + passengerBogies);
+        // ✅ Combined filter (Sleeper + capacity > 60)
+        System.out.println("\n=== Sleeper Bogies with Capacity > 60 ===");
+        bogies.stream()
+                .filter(b -> b.getType().equalsIgnoreCase("Sleeper"))
+                .filter(b -> b.getSeatingCapacity() > 60)
+                .forEach(System.out::println);
     }
 }
