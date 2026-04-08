@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.*;
 
 class InvalidCapacityException extends Exception {
     InvalidCapacityException(String message) {
@@ -56,15 +57,23 @@ public class Main {
 
         try {
             bogies.add(new PassengerBogie("P1", "Sleeper", 72));
-            bogies.add(new PassengerBogie("P2", "AC Chair", -10));
+            bogies.add(new PassengerBogie("P2", "AC Chair", 60));
+            bogies.add(new PassengerBogie("P3", "First Class", 40));
+            bogies.add(new PassengerBogie("P4", "Sleeper", -10));
         } catch (InvalidCapacityException e) {
             System.out.println(e.getMessage());
         }
 
         bogies.add(new GoodsBogie("G1", "Rectangular", "Coal"));
+        bogies.add(new GoodsBogie("G2", "Cylindrical", "Oil"));
 
-        for (Bogie b : bogies) {
-            System.out.println("Bogie ID: " + b.getId() + " Type: " + b.getType());
-        }
+        Map<String, List<Bogie>> groupedBogies =
+                bogies.stream()
+                        .collect(Collectors.groupingBy(Bogie::getType));
+
+        groupedBogies.forEach((type, list) -> {
+            System.out.println("Type: " + type);
+            list.forEach(b -> System.out.println("  Bogie ID: " + b.getId()));
+        });
     }
 }
