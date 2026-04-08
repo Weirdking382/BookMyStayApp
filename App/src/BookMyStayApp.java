@@ -52,6 +52,15 @@ public class Main {
                 new GoodsBogie("G2", "Cylindrical", "Oil")
         );
 
+        Map<String, List<Bogie>> groupedBogies =
+                bogies.stream()
+                        .collect(Collectors.groupingBy(Bogie::getType));
+
+        groupedBogies.forEach((type, list) -> {
+            System.out.println("Type: " + type);
+            list.forEach(b -> System.out.println("  Bogie ID: " + b.getId()));
+        });
+
         int totalSeats = bogies.stream()
                 .filter(b -> b instanceof PassengerBogie)
                 .map(b -> (PassengerBogie) b)
