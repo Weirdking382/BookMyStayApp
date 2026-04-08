@@ -1,6 +1,12 @@
 import java.util.*;
 import java.util.stream.*;
 
+class InvalidCapacityException extends Exception {
+    InvalidCapacityException(String message) {
+        super(message);
+    }
+}
+
 abstract class Bogie {
     String id;
     String type;
@@ -22,9 +28,16 @@ abstract class Bogie {
 class PassengerBogie extends Bogie {
     int capacity;
 
-    PassengerBogie(String id, String type, int capacity) {
+    PassengerBogie(String id, String type, int capacity) throws InvalidCapacityException {
         super(id, type);
+        if (capacity <= 0) {
+            throw new InvalidCapacityException("Invalid capacity for bogie " + id);
+        }
         this.capacity = capacity;
+    }
+
+    int getCapacity() {
+        return capacity;
     }
 }
 
@@ -40,13 +53,19 @@ class GoodsBogie extends Bogie {
 public class Main {
     public static void main(String[] args) {
 
-        List<Bogie> bogies = Arrays.asList(
-                new PassengerBogie("P1", "Sleeper", 72),
-                new PassengerBogie("P2", "AC Chair", 60),
-                new PassengerBogie("P3", "First Class", 40),
-                new GoodsBogie("G1", "Rectangular", "Coal"),
-                new GoodsBogie("G2", "Cylindrical", "Oil")
-        );
+        List<Bogie> bogies = new ArrayList<>();
+
+        try {
+            bogies.add(new PassengerBogie("P1", "Sleeper", 72));
+            bogies.add(new PassengerBogie("P2", "AC Chair", 60));
+            bogies.add(new PassengerBogie("P3", "First Class", 40));
+            bogies.add(new PassengerBogie("P4", "Sleeper", -10));
+        } catch (InvalidCapacityException e) {
+            System.out.println(e.getMessage());
+        }
+
+        bogies.add(new GoodsBogie("G1", "Rectangular", "Coal"));
+        bogies.add(new GoodsBogie("G2", "Cylindrical", "Oil"));
 
         Map<String, List<Bogie>> groupedBogies =
                 bogies.stream()
