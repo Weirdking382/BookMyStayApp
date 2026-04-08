@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.stream.*;
+import java.util.regex.*;
 
 abstract class Bogie {
     String id;
@@ -26,6 +27,10 @@ class PassengerBogie extends Bogie {
         super(id, type);
         this.capacity = capacity;
     }
+
+    int getCapacity() {
+        return capacity;
+    }
 }
 
 class GoodsBogie extends Bogie {
@@ -38,7 +43,26 @@ class GoodsBogie extends Bogie {
 }
 
 public class Main {
+
+    static boolean isValidTrainId(String trainId) {
+        Pattern pattern = Pattern.compile("^TRN-\\d{4}$");
+        Matcher matcher = pattern.matcher(trainId);
+        return matcher.matches();
+    }
+
+    static boolean isValidCargoCode(String cargo) {
+        Pattern pattern = Pattern.compile("^[A-Z]{3,10}$");
+        Matcher matcher = pattern.matcher(cargo);
+        return matcher.matches();
+    }
+
     public static void main(String[] args) {
+
+        String trainId = "TRN-1234";
+        String cargo = "COAL";
+
+        System.out.println("Train ID valid: " + isValidTrainId(trainId));
+        System.out.println("Cargo valid: " + isValidCargoCode(cargo));
 
         List<Bogie> bogies = Arrays.asList(
                 new PassengerBogie("P1", "Sleeper", 72),
@@ -56,5 +80,13 @@ public class Main {
             System.out.println("Type: " + type);
             list.forEach(b -> System.out.println("  Bogie ID: " + b.getId()));
         });
+
+        int totalSeats = bogies.stream()
+                .filter(b -> b instanceof PassengerBogie)
+                .map(b -> (PassengerBogie) b)
+                .map(PassengerBogie::getCapacity)
+                .reduce(0, Integer::sum);
+
+        System.out.println("Total Seating Capacity: " + totalSeats);
     }
 }
