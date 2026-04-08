@@ -1,6 +1,12 @@
 import java.util.*;
 import java.util.stream.*;
 
+class InvalidCargoException extends Exception {
+    InvalidCargoException(String message) {
+        super(message);
+    }
+}
+
 abstract class Bogie {
     String id;
     String type;
@@ -26,6 +32,10 @@ class PassengerBogie extends Bogie {
         super(id, type);
         this.capacity = capacity;
     }
+
+    int getCapacity() {
+        return capacity;
+    }
 }
 
 class GoodsBogie extends Bogie {
@@ -35,10 +45,45 @@ class GoodsBogie extends Bogie {
         super(id, type);
         this.cargoType = cargoType;
     }
+
+    void assignCargo(String cargo) throws InvalidCargoException {
+        if (type.equals("Cylindrical") && !cargo.equalsIgnoreCase("Oil")) {
+            throw new InvalidCargoException("Unsafe cargo for Cylindrical bogie " + id);
+        }
+        if (type.equals("Rectangular") && cargo.equalsIgnoreCase("Oil")) {
+            throw new InvalidCargoException("Unsafe cargo for Rectangular bogie " + id);
+        }
+        this.cargoType = cargo;
+    }
+
+    String getCargoType() {
+        return cargoType;
+    }
 }
 
 public class Main {
     public static void main(String[] args) {
+
+        GoodsBogie g1 = new GoodsBogie("G1", "Cylindrical", "Oil");
+        GoodsBogie g2 = new GoodsBogie("G2", "Rectangular", "Coal");
+
+        try {
+            g1.assignCargo("Coal");
+            System.out.println("Cargo assigned to " + g1.getId());
+        } catch (InvalidCargoException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("Attempted assignment for " + g1.getId());
+        }
+
+        try {
+            g2.assignCargo("Oil");
+            System.out.println("Cargo assigned to " + g2.getId());
+        } catch (InvalidCargoException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("Attempted assignment for " + g2.getId());
+        }
 
         List<Bogie> bogies = Arrays.asList(
                 new PassengerBogie("P1", "Sleeper", 72),
