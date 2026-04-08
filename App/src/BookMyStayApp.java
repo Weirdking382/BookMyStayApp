@@ -10,6 +10,10 @@ abstract class Bogie {
         this.type = type;
     }
 
+    String getId() {
+        return id;
+    }
+
     String getType() {
         return type;
     }
@@ -50,6 +54,15 @@ public class Main {
             bogies.add(new PassengerBogie("P" + i, "Sleeper", 72));
             bogies.add(new GoodsBogie("G" + i, "Cylindrical", "Oil"));
         }
+
+        Map<String, List<Bogie>> groupedBogies =
+                bogies.stream()
+                        .collect(Collectors.groupingBy(Bogie::getType));
+
+        groupedBogies.forEach((type, list) -> {
+            System.out.println("Type: " + type);
+            list.forEach(b -> System.out.println("  Bogie ID: " + b.getId()));
+        });
 
         long startLoop = System.nanoTime();
 
