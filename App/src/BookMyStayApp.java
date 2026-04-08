@@ -97,7 +97,7 @@ public class Main {
                 .map(b -> (GoodsBogie) b)
                 .allMatch(g ->
                         (g.getType().equals("Cylindrical") && g.getCargoType().equalsIgnoreCase("Oil")) ||
-                                (g.getType().equals("Rectangular") && !g.getCargoType().equalsIgnoreCase("Oil"))
+                        (g.getType().equals("Rectangular") && !g.getCargoType().equalsIgnoreCase("Oil"))
                 );
 
         if (isSafe) {
