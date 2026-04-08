@@ -1,72 +1,31 @@
-import java.util.*;
-import java.util.stream.*;
-
-abstract class Bogie {
-    String id;
-    String type;
-
-    Bogie(String id, String type) {
-        this.id = id;
-        this.type = type;
-    }
-
-    String getId() {
-        return id;
-    }
-
-    String getType() {
-        return type;
-    }
-}
-
-class PassengerBogie extends Bogie {
-    int capacity;
-
-    PassengerBogie(String id, String type, int capacity) {
-        super(id, type);
-        this.capacity = capacity;
-    }
-
-    int getCapacity() {
-        return capacity;
-    }
-}
-
-class GoodsBogie extends Bogie {
-    String cargoType;
-
-    GoodsBogie(String id, String type, String cargoType) {
-        super(id, type);
-        this.cargoType = cargoType;
-    }
-}
+import java.util.regex.*;
 
 public class Main {
+
+    static boolean isValidTrainId(String trainId) {
+        Pattern pattern = Pattern.compile("^TRN-\\d{4}$");
+        Matcher matcher = pattern.matcher(trainId);
+        return matcher.matches();
+    }
+
+    static boolean isValidCargoCode(String cargo) {
+        Pattern pattern = Pattern.compile("^[A-Z]{3,10}$");
+        Matcher matcher = pattern.matcher(cargo);
+        return matcher.matches();
+    }
+
     public static void main(String[] args) {
 
-        List<Bogie> bogies = Arrays.asList(
-                new PassengerBogie("P1", "Sleeper", 72),
-                new PassengerBogie("P2", "AC Chair", 60),
-                new PassengerBogie("P3", "First Class", 40),
-                new GoodsBogie("G1", "Rectangular", "Coal"),
-                new GoodsBogie("G2", "Cylindrical", "Oil")
-        );
+        String trainId1 = "TRN-1234";
+        String trainId2 = "TRAIN12";
 
-        Map<String, List<Bogie>> groupedBogies =
-                bogies.stream()
-                        .collect(Collectors.groupingBy(Bogie::getType));
+        String cargo1 = "COAL";
+        String cargo2 = "oil123";
 
-        groupedBogies.forEach((type, list) -> {
-            System.out.println("Type: " + type);
-            list.forEach(b -> System.out.println("  Bogie ID: " + b.getId()));
-        });
+        System.out.println("Train ID " + trainId1 + " valid: " + isValidTrainId(trainId1));
+        System.out.println("Train ID " + trainId2 + " valid: " + isValidTrainId(trainId2));
 
-        int totalSeats = bogies.stream()
-                .filter(b -> b instanceof PassengerBogie)
-                .map(b -> (PassengerBogie) b)
-                .map(PassengerBogie::getCapacity)
-                .reduce(0, Integer::sum);
-
-        System.out.println("Total Seating Capacity: " + totalSeats);
+        System.out.println("Cargo " + cargo1 + " valid: " + isValidCargoCode(cargo1));
+        System.out.println("Cargo " + cargo2 + " valid: " + isValidCargoCode(cargo2));
     }
 }
