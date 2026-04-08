@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.*;
 
 class InvalidCargoException extends Exception {
     InvalidCargoException(String message) {
@@ -21,6 +22,19 @@ abstract class Bogie {
 
     String getType() {
         return type;
+    }
+}
+
+class PassengerBogie extends Bogie {
+    int capacity;
+
+    PassengerBogie(String id, String type, int capacity) {
+        super(id, type);
+        this.capacity = capacity;
+    }
+
+    int getCapacity() {
+        return capacity;
     }
 }
 
@@ -70,5 +84,22 @@ public class Main {
         } finally {
             System.out.println("Attempted assignment for " + g2.getId());
         }
+
+        List<Bogie> bogies = Arrays.asList(
+                new PassengerBogie("P1", "Sleeper", 72),
+                new PassengerBogie("P2", "AC Chair", 60),
+                new PassengerBogie("P3", "First Class", 40),
+                new GoodsBogie("G1", "Rectangular", "Coal"),
+                new GoodsBogie("G2", "Cylindrical", "Oil")
+        );
+
+        Map<String, List<Bogie>> groupedBogies =
+                bogies.stream()
+                        .collect(Collectors.groupingBy(Bogie::getType));
+
+        groupedBogies.forEach((type, list) -> {
+            System.out.println("Type: " + type);
+            list.forEach(b -> System.out.println("  Bogie ID: " + b.getId()));
+        });
     }
 }
