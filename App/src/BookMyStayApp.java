@@ -26,6 +26,10 @@ class PassengerBogie extends Bogie {
         super(id, type);
         this.capacity = capacity;
     }
+
+    int getCapacity() {
+        return capacity;
+    }
 }
 
 class GoodsBogie extends Bogie {
@@ -48,13 +52,12 @@ public class Main {
                 new GoodsBogie("G2", "Cylindrical", "Oil")
         );
 
-        Map<String, List<Bogie>> groupedBogies =
-                bogies.stream()
-                        .collect(Collectors.groupingBy(Bogie::getType));
+        int totalSeats = bogies.stream()
+                .filter(b -> b instanceof PassengerBogie)
+                .map(b -> (PassengerBogie) b)
+                .map(PassengerBogie::getCapacity)
+                .reduce(0, Integer::sum);
 
-        groupedBogies.forEach((type, list) -> {
-            System.out.println("Type: " + type);
-            list.forEach(b -> System.out.println("  Bogie ID: " + b.getId()));
-        });
+        System.out.println("Total Seating Capacity: " + totalSeats);
     }
 }
